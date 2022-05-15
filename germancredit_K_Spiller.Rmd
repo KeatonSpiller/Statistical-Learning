@@ -1,0 +1,951 @@
+---
+title: "German Credit"
+class: "STAT 387"
+author: "Keaton Spiller, Winter 2022, STAT 387"
+date: "2/24/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = "styler")
+```
+
+<font size="8"> Report </font> 
+
+---
+
+<font size="6"> Conceptual </font> 
+
+  (a) Perform an exploratory analysis of data.
+
+    [1]  Default : 0 (no) and 1 (yes)                                      (qualitative)
+    
+    [2]  checkingstatus1: Status of existing checking account              (qualitative)
+    
+    [3]  duration: Duration in month                                       (numerical)
+    
+    [4]  history: Credit history                                           (qualitative)
+    
+    [5]  purpose: 1 of 10 things                                           (qualitative)
+    
+    [6]  amount: Credit amount                                             (numerical)
+    
+    [7]  savings:   Savings account/bonds                                  (qualitative)
+    
+    [8]  employ: Present employment since                                  (qualitative)
+    
+    [9]  installment: Installment rate in percentage of disposable income  (numerical)
+    
+    [10] status: Personal status and sex                                   (qualitative)
+    
+    [11] others: Other debtors / guarantors                                (qualitative)
+    
+    [12] residence: Present residence since                                (numerical)
+    
+    [13] property: Type of Property                                        (qualitative)
+    
+    [14] age: Age in years                                                 (numerical)
+    
+    [15] otherplans: Other installment plans                               (qualitative)
+    
+    [16] housing: 3 types of housing                                       (qualitative)
+    
+    [17] cards: Number of existing credits at this bank                    (numerical)
+    
+    [18] job: type of job                                                  (qualitative)
+    
+    [19] liable: Number of people being liable to provide maintenance for  (numerical)
+    
+    [20] tele: none or yes                                                 (qualitative)
+    
+    [21] foreign: yes or no                                                (qualitative)
+
+    Qualitative {14 categorical}: Default, checkingstatus1, history, purpose, savings, employ, status, others, property, otherplans, housing, job, tele, foreign
+    
+    Numeric {7 Numerical}: duration, amount, installment, residence, age, cards, liable
+    
+    
+![](./Exploratory_Analysis3.png)
+
+
+    Placing the qualitative variables into factor form with as.factor()
+    
+
+![](./Exploratory_Analysis5.png)
+
+    Interesting plots of variable exploration
+
+![](./Exploratory_Analysis8.png)
+
+![](./Exploratory_Analysis9.png)
+
+
+  (b) Build a reasonably “good” logistic regression model for these data. There is no need to explore interactions.
+Carefully justify all the choices you make in building the model.
+
+    full model without training data or variable reduction
+    
+    AIC = 993.82
+    
+
+    Train = amount < 5000
+    
+    Test = amount >= 5000
+
+    Train = 812 rows 21 variables
+    
+    Test = 188 rows 21 variables 
+    
+
+    full logistic Model with training data without variable reduction tested on test data
+    
+    AIC = 776.1
+    
+    
+    Variable reduction using Step AIC and BIC methods (forwards and backwards)
+    
+    Both methods resulting in the same variables and AIC/BIC values
+    
+    Reduced logistic Model with training data tested on test data
+    
+    AIC = 758.3341
+    
+    BIC = 694.3341
+    
+    
+![](./Variable_Selection.png)
+    
+    AIC went from 776.1 to 758.3341, which is slighly smaller, but acceptable for the simplified model with fewer variables
+    
+    
+    final variables : checkingstatus1 + duration + history + purpose + savings + installment + others + age + otherplans + housing + tele + foreign
+
+    The accuracy was also slightly smaller
+    
+    0.6489362 to 0.6382979 accuracy
+    
+    0.3510638 to 0.3617021 error
+    
+    However Since the reduced model is 12 variables, and the full model is 20 variables (not including Default),
+    
+    the smaller model will be significantly better for explainability, and cut away unnecesary/noisy variables.
+
+  (c) Write the final model in equation form. Provide a summary of estimates of the regression coefficients, the
+standard errors of the estimates, and 95% confidence intervals of the coefficients. Interpret the estimated
+coefficients of at least two predictors. Provide training error rate for the model.
+
+    Page 135 section {4.3}
+
+![](./Logistic_Model5.png)
+
+    X is a matrix with 12 variables checkingstatus1 + duration + history + purpose + savings + installment + others + age + otherplans + housing + tele + foreign
+    
+    logistic model Summary of regression coefficients and standard errors of the estimates
+    
+![](./Logistic_Model6.png)
+
+    95% confidence intervals
+
+![](./Logistic_Model7.png)
+
+![](./Logistic_Model8.png)
+
+    training error rate for the final logistic model = 0.3617021
+
+
+  (d) Fit a KNN with K chosen optimally using test error rate. Report error rate, sensitivity, specificity, and AUC
+for the optimal KNN based on the training data. Also, report its estimated test error rate.
+
+    K optimal test error rate = 11
+    
+    train error rate = 0.2413793
+    
+    train sensitivity = 0.9525424
+    
+    train Specificity = 0.2432432
+    
+    train AUC = 0.7828218
+    
+    test error rate = 0.3829787
+    
+    
+
+  (e) Repeat (d) using LDA.
+
+    train error rate = 0.4248768
+    
+    train sensitivity = 0.9135593
+    
+    train Specificity = 0.5135135
+    
+    train AUC = 0.8352497
+    
+    test error rate = 0.3244681
+
+
+
+  (f) Repeat (d) using QDA.
+
+    train error rate = 0.4889163
+    
+    train sensitivity = 0.7661017
+    
+    train Specificity = 0.8063063
+    
+    train AUC = 0.8477248
+    
+    test error rate = 0.393617
+    
+
+(g) Compare the results in (b), (d)-(f). Which classifier would you recommend? Justify your answer.
+
+
+  Results training on train data and testing on train data
+    
+
+![](./Final_Results_train.png)
+
+  Results training on train data and testing on test data
+
+![](./Final_Results_test.png)
+    
+    Based on the results I would recommend LDA, with the highest accuracy ~ 0.67 and lowest error rate ~ 0.32 on the test data.
+    Although KNN is the highest tested on train data, it doesn't do a good job accounting for unknown data (test data) and it's not the best model to choose.
+    
+    Therefore LDA is the best model for predicting Default given the reduced variable selection
+
+<font size="4">Additional notes </font> 
+
+
+Cross Validation for model selection?
+    
+    LOOCV: 
+    more Bias,less Variance 
+    
+    K-Fold: 
+    less Bias, > Variance
+    
+
+Ridge or Lasso For variable selection?
+
+    Ridge: 
+    
+    L2 Selection
+    
+    Small coefficients
+  
+    Lasso: 
+    
+    L1 Selection
+    
+    Large coefficients (Sparcity)
+    
+
+chi square test of association is more accurate for logistic regression variable selection 
+( Not Taught in this class)
+
+    anova(chi square test)
+
+
+<font size="6"> R Code </font> 
+---
+
+
+```{r}
+rm(list=ls()) 
+```
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide'}
+set.seed(1)
+library(bookdown)# load the libraries
+library(dplyr)
+library(broom)
+library(faraway)
+library(ellipse)
+library(rstudioapi)
+library(lmtest)
+library(simex)
+library(ggplot2)
+library(lars)
+library(MASS)
+library(pls)
+library(olsrr)
+library(leaps)
+library(matlib)
+library(olsrr)
+library(ggplot2)
+library(lattice)
+library(class)
+library(MASS)
+library(ISLR2)
+library(boot)
+library(ISLR2)
+library(class)
+library(e1071)
+library(gam)
+library(glmnet)
+library(Amelia)
+library(caret)
+library(pROC)
+library(ROCR)
+```
+
+(a) exploratory analysis
+
+```{r, results='hide',fig.show='hide'}
+german_raw <-  read.csv(file = "germancredit.csv", header = TRUE)
+german <- german_raw
+head(german_raw,5)
+```
+
+```{r, results='hide',fig.show='hide'}
+missmap(german, main = "Missing values vs observed")
+any(is.na(german_raw))
+```
+
+```{r, results='hide',fig.show='hide'}
+str(german_raw)
+```
+
+```{r, results='hide',fig.show='hide'}
+german$Default <- as.factor(german_raw$Default)
+german$checkingstatus1 <- as.factor(german_raw$checkingstatus1)
+german$history <- as.factor(german_raw$history)
+german$purpose <- as.factor(german_raw$purpose)
+german$savings <- as.factor(german_raw$savings)
+german$employ <- as.factor(german_raw$employ)
+german$status <- as.factor(german_raw$status)
+german$others <- as.factor(german_raw$others)
+german$property <- as.factor(german_raw$property)
+german$otherplans <- as.factor(german_raw$otherplans)
+german$housing <- as.factor(german_raw$housing)
+german$job <- as.factor(german_raw$job)
+german$tele <- as.factor(german_raw$tele)
+german$foreign <- as.factor(german_raw$foreign)
+str(german)
+```
+
+```{r, results='hide',fig.show='hide'}
+plot(german[1:10])
+plot(german[11:21])
+
+plot(german[1:5])
+plot(german[6:10])
+plot(german[11:15])
+plot(german[16:21])
+```
+
+```{r, results='hide',fig.show='hide'}
+colnames <-  colnames(german)
+colnames
+```
+
+```{r, results='hide',fig.show='hide'}
+ggplot(data=german, aes(x=Default, y=amount), x=Default, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=checkingstatus1, y=amount), x=checkingstatus1, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=duration, y=amount), x=duration, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=history, y=amount), x=history, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=purpose, y=amount), x=purpose, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=savings, y=amount), x=savings, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=employ, y=amount), x=employ, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=installment, y=amount), x=installment, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=status, y=amount), x=status, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=others, y=amount), x=others, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=residence, y=amount), x=residence, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=property, y=amount), x=property, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=age, y=amount), x=age, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=otherplans, y=amount), x=otherplans, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=housing, y=amount), x=housing, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=cards, y=amount), x=cards, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=job, y=amount), x=job, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=liable, y=amount), x=liable, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=tele, y=amount), x=tele, y=amount)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=foreign, y=amount), x=foreign, y=amount)+
+  geom_line()+
+  geom_point()
+
+```
+
+```{r, results='hide',fig.show='hide'}
+ggplot(data=german, aes(x=Default, y=age), x=Default, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=checkingstatus1, y=age), x=checkingstatus1, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=duration, y=age), x=duration, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=history, y=age), x=history, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=purpose, y=age), x=purpose, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=savings, y=age), x=savings, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=employ, y=age), x=employ, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=installment, y=age), x=installment, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=status, y=age), x=status, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=others, y=age), x=others, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=residence, y=age), x=residence, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=property, y=age), x=property, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=amount, y=age), x=age, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=otherplans, y=age), x=otherplans, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=housing, y=age), x=housing, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=cards, y=age), x=cards, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=job, y=age), x=job, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=liable, y=age), x=liable, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=tele, y=age), x=tele, y=age)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=foreign, y=age), x=foreign, y=age)+
+  geom_line()+
+  geom_point()
+
+```
+
+```{r, results='hide',fig.show='hide'}
+ggplot(data=german, aes(x=Default, y=Default), x=Default, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=checkingstatus1, y=Default), x=checkingstatus1, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=duration, y=Default), x=duration, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=history, y=Default), x=history, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=purpose, y=Default), x=purpose, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=savings, y=Default), x=savings, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=employ, y=Default), x=employ, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=installment, y=Default), x=installment, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=status, y=Default), x=status, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=others, y=Default), x=others, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=residence, y=Default), x=residence, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=property, y=Default), x=property, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=amount, y=Default), x=Default, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=otherplans, y=Default), x=otherplans, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=housing, y=Default), x=housing, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=cards, y=Default), x=cards, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=job, y=Default), x=job, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=liable, y=Default), x=liable, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=tele, y=Default), x=tele, y=Default)+
+  geom_line()+
+  geom_point()
+
+ggplot(data=german, aes(x=foreign, y=Default), x=foreign, y=Default)+
+  geom_line()+
+  geom_point()
+```
+
+(b)
+
+```{r, results='hide',fig.show='hide'}
+german_full <- german # In Case of doing modifications on the german data
+
+train <- ( german_full$amount < 5000)
+
+test.y <-  german_full$Default[!train ]
+train.x <-  german_full[train,]
+test.x <-  german_full[!train,]
+
+print(dim(train.x))
+print(dim(test.x))
+german_full
+```
+
+```{r, results='hide',fig.show='hide'}
+# logistic Model on full data without variable reduction
+glm.full <- glm(Default ~ ., data=german_full, family = "binomial"(link = "logit")) 
+summary(glm.full)
+```
+
+```{r, results='hide',fig.show='hide'}
+# logistic Model on the training data without variable reduction
+glm.fits <- glm(Default ~ ., data=train.x, family = "binomial"(link = "logit"))
+glm.fits
+(summary(glm.fits))
+par(mfrow = c(2,2))
+plot(glm.fits)
+glm.probs <- predict( glm.fits, newdata=test.x,
+type = "response")
+```
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide'}
+glm.pred <- rep (0, length(test.y))
+glm.pred [ glm.probs > .5] <- 1
+(confusion_matrix <- table ( glm.pred, test.y))
+(Accuracy_glm <- mean ( glm.pred == test.y))
+(error_glm <- mean ( glm.pred != test.y))
+
+(specificity_glm <- specificity(confusion_matrix))
+(sensitivity_glm <- sensitivity(confusion_matrix))
+
+(glm_auc <- auc(test.y, glm.probs))
+
+plot(x = test.x$amount, y = glm.pred)
+plot(x = test.x$amount, y = glm.probs)
+```
+  
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide'}
+glm.pred_train_full <- rep (0, length(german_full$Default))
+glm.pred_train_full [ glm.probs > .5] <- 1
+
+
+(confusion_matrix_train_full <- table ( glm.pred_train_full, german_full$Default))
+(accuracy_glm_train_full <- mean ( glm.pred_train_full == german_full$Default))
+(error_glm_train_full <- mean ( glm.pred_train_full != german_full$Default))
+(specificity_glm_train_full <- specificity(confusion_matrix_train_full))
+(sensitivity_glm_train_full <- sensitivity(confusion_matrix_train_full))
+
+(glm_auc_train_full <- auc(german_full$Default, glm.pred_train_full))
+
+```  
+    
+```{r, results='hide',fig.show='hide'}
+glmAIC <- step(object=glm.fits, direction="both",criterion="AIC", trace=FALSE)
+glmAIC$deviance
+AIC(glmAIC)
+BIC(glmAIC)
+```
+
+```{r, results='hide',fig.show='hide'}
+n <- length(train.x)
+glmBIC <- step(object=glm.fits, direction="both",criterion="BIC",k=log(n), trace=FALSE)
+glmBIC$deviance
+AIC(glmBIC)
+BIC(glmBIC)
+```
+
+```{r, results='hide',fig.show='hide'}
+glm.fits2 <- glm(Default ~ checkingstatus1 + duration + history + purpose + savings + 
+                   installment + others + age + otherplans + housing + tele + foreign, 
+                 data=train.x, family = "binomial"(link = "logit"))
+glm.fits2
+glms2 <- summary(glm.fits2)
+par(mfrow = c(2,2))
+plot(glm.fits2)
+glm.probs2 <- predict( glm.fits2, newdata=test.x,
+type = "response")
+```
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide'}
+glm.pred2 <- rep (0, length(test.y))
+glm.pred2 [ glm.probs2 > .5] <- 1
+
+(confusion_matrix2 <- table ( glm.pred2, test.y))
+(accuracy_glm2 <- mean ( glm.pred2 == test.y))
+(error_glm2 <- mean ( glm.pred2 != test.y))
+(specificity_glm2 <- specificity(confusion_matrix2))
+(sensitivity_glm2 <- sensitivity(confusion_matrix2))
+
+plot(x = test.x$amount, y = glm.pred2)
+plot(x = test.x$amount, y = glm.probs2)
+
+(glm_auc2 <- auc(test.y, glm.probs2))
+
+```
+ 
+(c)
+
+```{r, results='hide',fig.show='hide'}
+summary(glm.fits2)
+```
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide'}
+confint(glm.fits2)
+```
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide'}
+glm.pred_train <- rep (0, length(train.x$Default))
+glm.pred_train [ glm.probs2 > .5] <- 1
+
+(confusion_matrix_train <- table ( glm.pred_train, train.x$Default))
+(accuracy_glm_train <- mean ( glm.pred_train == train.x$Default))
+(error_glm_train <- mean ( glm.pred_train != train.x$Default))
+(specificity_glm_train <- specificity(confusion_matrix_train))
+(sensitivity_glm_train <- sensitivity(confusion_matrix_train))
+
+(glm_auc_train <- auc(train.x$Default, glm.pred_train))
+```
+
+(d)
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide'}
+# KNN training and test on test data
+set.seed(1)
+train <- ( german_full$amount < 5000)
+train.x <- cbind (german_full$checkingstatus1, german_full$duration, german_full$history, german_full$purpose, german_full$savings, 
+                    german_full$installment, german_full$others, german_full$age, german_full$otherplans, 
+                  german_full$housing, german_full$tele, german_full$foreign)[train , ]
+
+test.x <- cbind (german_full$checkingstatus1, german_full$duration, german_full$history, german_full$purpose, german_full$savings, 
+                    german_full$installment, german_full$others, german_full$age, german_full$otherplans, 
+                  german_full$housing, german_full$tele, german_full$foreign)[! train , ]
+
+train.Default <- german_full$Default[ train ]
+
+test.Default <- german_full$Default[!train ]
+
+knn.pred <- knn(train = train.x, 
+                test = test.x,
+                cl = train.Default,
+                k = 11)
+knn.prob <- knn(train = train.x, 
+                test = test.x,
+                cl = train.Default,
+                k = 11,
+                prob=TRUE)
+
+knn_confusion_matrix <-  table (knn.pred, test.Default)
+(knn_accuracy <- mean ( knn.pred == test.Default))
+(knn_error <- mean ( knn.pred != test.Default))
+(knn_Specificity <- specificity(knn_confusion_matrix)) 
+# true negative rate.
+(knn_sensitivity <- sensitivity(knn_confusion_matrix))
+# true positive rate.
+
+scores.knn <- attr(knn.prob,"prob")
+knn_roc <- roc(test.Default, scores.knn)
+knn_AUC <- knn_roc$auc
+
+print(knn_AUC)
+pred_knn <- prediction(scores.knn, test.Default)
+pred_knn <- performance(pred_knn, "tpr", "fpr")
+plot(pred_knn, avg= "threshold", colorize=T, lwd=3, main="ROC")
+abline(a = 0, b = 1)
+
+```
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide'}
+# KNN training and test on train data
+knn.pred_train <- knn(train = train.x, 
+                test = train.x,
+                cl = train.Default,
+                k = 11)
+knn.prob_train <- knn(train = train.x, 
+                test = train.x,
+                cl = train.Default,
+                k = 11,
+                prob=TRUE)
+knn_confusion_matrix_train <-  table (knn.pred_train, train.Default)
+(knn_accuracy_train <- mean ( knn.pred_train == train.Default))
+(knn_error_train <- mean ( knn.pred_train != train.Default))
+(knn_Specificity_train <- specificity(knn_confusion_matrix_train)) 
+# true negative rate.
+(knn_sensitivity_train <- sensitivity(knn_confusion_matrix_train))
+# true positive rate.
+
+scores.knn_train <- attr(knn.prob_train,"prob")
+knn_roc_train <- roc(train.Default, scores.knn_train)
+knn_AUC_train <- knn_roc_train$auc
+
+print(knn_AUC_train)
+pred_knn_train <- prediction(scores.knn_train, train.Default)
+pred_knn_train <- performance(pred_knn_train, "tpr", "fpr")
+plot(pred_knn_train, avg= "threshold", colorize=T, lwd=3, main="ROC")
+abline(a = 0, b = 1)
+```
+
+(e)
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide', error=FALSE}
+# LDA training
+lda.fit <- lda(
+Default ~ checkingstatus1 + duration + history + purpose + savings + 
+  installment + others + age + otherplans + housing + tele + foreign,
+data=german_full,
+subset = train
+)
+
+plot( lda.fit )
+lda.fit
+
+```
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide', error=FALSE}
+# LDA test prediction
+lda.pred <- predict(lda.fit , german_full[!train, ])
+lda.prob <- predict(lda.fit , german_full[!train, ], type="response")
+names ( lda.pred )
+lda.class <- lda.pred$class
+
+lda_confusion_matrix <- table ( lda.class, test.Default)
+
+(lda_accuracy <- mean ( lda.class == test.Default))
+(lda_error <- mean ( lda.class != test.Default))
+(lda_specificity <- specificity(lda_confusion_matrix))
+(lda_sensitivity <- sensitivity(lda_confusion_matrix))
+
+pred <- prediction(lda.pred$posterior[,2], test.Default) 
+perf <- performance(pred,"tpr","fpr")
+plot(perf,colorize=TRUE)
+abline(a = 0, b = 1)
+
+auc_lda <- performance(pred, measure = "auc")
+auc_lda <- auc_lda@y.values[[1]]
+print(auc_lda)
+
+```
+
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide', error=FALSE}
+# LDA train prediction
+lda.pred_train <- predict(lda.fit , german_full[train, ])
+lda.prob_train <- predict(lda.fit , german_full[train, ], type="response")
+
+lda.class_train <- lda.pred_train$class
+
+lda_confusion_matrix_train <- table ( lda.class_train, train.Default)
+
+(lda_accuracy_train <- mean ( lda.class == train.Default))
+(lda_error_train <- mean ( lda.class != train.Default))
+(lda_specificity_train <- specificity(lda_confusion_matrix_train))
+(lda_sensitivity_train <- sensitivity(lda_confusion_matrix_train))
+
+lda_pred_train <- prediction(lda.pred_train$posterior[,2], train.Default) 
+lda_perf_train <- performance(lda_pred_train,"tpr","fpr")
+plot(lda_perf_train,colorize=TRUE)
+abline(a = 0, b = 1)
+
+auc_lda_train <- performance(lda_pred_train, measure = "auc")
+auc_lda_train <- auc_lda_train@y.values[[1]]
+print(auc_lda_train)
+```
+
+
+(f)
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide', error=TRUE}
+# QDA Training
+qda.fit <- qda(
+Default ~ checkingstatus1 + duration + history + purpose + savings + 
+  installment + others + age + otherplans + housing + tele + foreign,
+data=german_full,
+subset = train
+)
+qda.fit
+```
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide', error=TRUE}
+# QDA test prediction
+qda.pred <- predict(qda.fit , german_full[!train, ])
+names ( qda.pred )
+qda.class <- qda.pred$class
+
+qda_confusion_matrix <- table ( qda.class, test.Default)
+
+(qda_accuracy <- mean ( qda.class == test.Default))
+(qda_error <- mean ( qda.class != test.Default))
+(qda_specificity <- specificity(qda_confusion_matrix))
+(qda_sensitivity <- sensitivity(qda_confusion_matrix))
+
+pred <- prediction(qda.pred$posterior[,2], test.Default) 
+perf <- performance(pred,"tpr","fpr")
+plot(perf,colorize=TRUE)
+abline(a = 0, b = 1)
+
+auc_qda <- performance(pred, measure = "auc")
+auc_qda <- auc_qda@y.values[[1]]
+print(auc_qda)
+```
+
+```{r fig.show='hide', message=FALSE, warning=FALSE, results='hide', error=TRUE}
+# QDA train prediction
+qda.pred_train <- predict(qda.fit , german_full[train, ])
+qda.prob_train <- predict(qda.fit , german_full[train, ], type="response")
+
+qda.class_train <- qda.pred_train$class
+
+qda_confusion_matrix_train <- table ( qda.class_train, train.Default)
+
+(qda_accuracy_train <- mean ( qda.class == train.Default))
+(qda_error_train <- mean ( qda.class != train.Default))
+(qda_specificity_train <- specificity(qda_confusion_matrix_train))
+(qda_sensitivity_train <- sensitivity(qda_confusion_matrix_train))
+
+qda_pred_train <- prediction(qda.pred_train$posterior[,2], train.Default) 
+qda_perf_train <- performance(qda_pred_train,"tpr","fpr")
+plot(qda_perf_train,colorize=TRUE)
+abline(a = 0, b = 1)
+
+auc_qda_train <- performance(qda_pred_train, measure = "auc")
+auc_qda_train <- auc_qda_train@y.values[[1]]
+print(auc_qda_train)
+```
+
+(g)
+```{r, results='hide',fig.show='hide'}
+train_results <- data.frame(
+  Model = c("Logistic_full", "Logistic_reduced", "KNN", "LDA", "QDA"),
+   Accuracy = c(accuracy_glm_train_full,accuracy_glm_train,knn_accuracy_train, lda_accuracy_train, qda_accuracy_train) ,
+   Error = c(error_glm_train_full,error_glm_train,knn_error_train,lda_error_train,qda_error_train),
+   Sensitivity = c(sensitivity_glm_train_full,sensitivity_glm_train,knn_sensitivity_train,lda_sensitivity_train,qda_sensitivity_train),
+     specificity =c(specificity_glm_train_full,specificity_glm_train,knn_Specificity_train,lda_specificity_train,qda_specificity_train),
+     AUC = c(glm_auc_train_full,glm_auc_train,knn_AUC_train,auc_lda_train,auc_qda_train)
+)
+View(train_results)
+```
+
+```{r, results='hide',fig.show='hide'}
+test_results <- data.frame(
+  Model = c("Logistic_full", "Logistic_reduced", "KNN", "LDA", "QDA"),
+   Accuracy = c(Accuracy_glm,accuracy_glm2,knn_accuracy, lda_accuracy, qda_accuracy) ,
+   Error = c(error_glm,error_glm2,knn_error,lda_error,qda_error),
+   Sensitivity = c(sensitivity_glm,sensitivity_glm2,knn_sensitivity,lda_sensitivity,qda_sensitivity),
+     specificity =c(specificity_glm,specificity_glm2,knn_Specificity,lda_specificity,qda_specificity),
+     AUC = c(glm_auc,glm_auc2,knn_AUC,auc_lda,auc_qda)
+)
+View(test_results)
+```
+
