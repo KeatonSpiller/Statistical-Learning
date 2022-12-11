@@ -1,4 +1,4 @@
-Download the PowerPoint to see the analysis breakdown
+Download the PowerPoint to see the analysis breakdown.
 
 # Summary
 
