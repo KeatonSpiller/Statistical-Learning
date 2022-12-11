@@ -1,3 +1,7 @@
+# Summary
+
+Using the German Credit dataset to statistically model Default Rates. This involved exploratory analysis, variable selection, and statistical modeling. In order to analyze the default rate of the german people I compared logistic regression, KNN, LDA and QDA models for the best error rate, sensitivity, specificity, and AUC. LDA had the best model for this project with the lowest error rate, highest accuracy with the best balance of AUC.
+
 # Statistical-Learning
 Statistical Learning
 * Requirements
